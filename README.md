@@ -5,8 +5,8 @@
 
 **Some examples:**
 
-**Input format:** 
-Simply plain text listing all facets of a simplicial complex. Each facet is enclosed in curly braces `{...}` The nodes can be  arbitrary integers separated by spaces, commas (or actually anything other than numbers and curly braces).
+**Input format:**   
+Simply plain text listing all facets of a simplicial complex. Each facet should be enclosed in curly braces `{...}` The nodes can be  arbitrary integers separated by spaces, commas (or actually anything other than the numbers or curly braces).
 		
 	{1 2 3 4 5} {1 5 6 7} {2 8 9} {7 8}
 
