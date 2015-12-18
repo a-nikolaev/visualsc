@@ -5,7 +5,9 @@
 
 **Some examples:**
 
-[![screenshot](http://i.imgur.com/xFlsksu.png)](http://i.imgur.com/pV0MvNy.png)
+[![screenshot](http://i.imgur.com/Fg1vOCJ.png)](http://i.imgur.com/pV0MvNy.png)
+
+![screenshot](http://i.imgur.com/dkFtylh.png)
 
 **Input format:**   
 Simply plain text listing all facets of a simplicial complex. Each facet should be enclosed in curly braces `{...}` The nodes can be  arbitrary integers separated by spaces, commas (or actually anything other than the numbers or curly braces).
