@@ -19,7 +19,7 @@ New-line and other whitespace characters can be added for clarity. In fact, it m
  ![](http://i.imgur.com/hf4kVvF.png) 
 
 ## Mathematical definition
-A **Simplicial Complex** [[see an article in Wikipedia](https://en.wikipedia.org/wiki/Abstract_simplicial_complex)] is a family of non-empty finite sets closed under the operation of taking non-empty subsets.
+A **Simplicial Complex** [[see the article in Wikipedia](https://en.wikipedia.org/wiki/Abstract_simplicial_complex)] is a family of non-empty finite sets closed under the operation of taking non-empty subsets.
 
 For example, consider a simplicial complex **SC = { {1, 2, 3}, {1, 4}, {1, 2}, {1, 3}, {2, 3}, {1}, {2}, {3}, {4} }**. If **x** is an element of **SC**, then all non-empty subsets of **x** are also in **SC**. 
 
