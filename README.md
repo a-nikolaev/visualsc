@@ -7,6 +7,8 @@ Output is a PDF file, please use other tools to convert to PNG, SVG, or other fo
 
 **Some examples:**
 
+![screenshot](http://i.imgur.com/ZspIks3.png)
+
 ![screenshot](http://i.imgur.com/JPqTXK7.png)
 
 **Input format:**   

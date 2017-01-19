@@ -129,7 +129,7 @@ let layout initial_config sc =
             let dist = len vec_ij in
             let overlap = radi +. radj -. dist +. 0.40 in
 
-            let overlap = overlap +. 0.1 *. (if overlap > 0.0 then 1.0 else exp(4.0*.overlap) ) in 
+            (* let overlap = overlap +. 0.1 *. (if overlap > 0.0 then 1.0 else exp(4.0*.overlap) ) in *)
             
             if overlap > 0.0 then
             ( 
