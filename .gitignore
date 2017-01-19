@@ -27,5 +27,6 @@ setup.log
 
 visualsc
 *.sc
+*.coords
 *.pdf
 *.png

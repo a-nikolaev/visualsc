@@ -1,13 +1,13 @@
 
 # Simplicial complex visualization
 
-**visualsc** is a tool similar to [Graphviz](http://graphviz.org/) designed for visualizing simplicial complexes rather than graphs. It is using physics-like simulation for choosing good node layout.
+**visualsc** is a tool similar to [Graphviz](http://graphviz.org/) designed for visualizing 
+abstract simplicial complexes rather than graphs. It is using physics-like simulation for choosing good node layout. 
+Output is a PDF file, please use other tools to convert to PNG, SVG, or other formats.
 
 **Some examples:**
 
-[![screenshot](http://i.imgur.com/Fg1vOCJ.png)](http://i.imgur.com/pV0MvNy.png)
-
-![screenshot](http://i.imgur.com/dkFtylh.png)
+![screenshot](http://i.imgur.com/JPqTXK7.png)
 
 **Input format:**   
 Simply plain text listing all facets of a simplicial complex. Each facet should be enclosed in curly braces `{...}` The nodes can be  arbitrary integers separated by spaces, commas (or actually anything other than the numbers or curly braces).
@@ -16,10 +16,11 @@ Simply plain text listing all facets of a simplicial complex. Each facet should 
 
 New-line and other whitespace characters can be added for clarity. In fact, it makes sense to improve the program allowing arbitrary strings as nodes. 
 
- ![](http://i.imgur.com/hf4kVvF.png) 
+ ![](http://i.imgur.com/HG9Xk4m.png) 
 
 ## Mathematical definition
-A **Simplicial Complex** [[see the article in Wikipedia](https://en.wikipedia.org/wiki/Abstract_simplicial_complex)] is a family of non-empty finite sets closed under the operation of taking non-empty subsets.
+A **anstract simplicial complex** \[[see the article in Wikipedia](https://en.wikipedia.org/wiki/Abstract_simplicial_complex)\]
+is a family of non-empty finite sets closed under the operation of taking non-empty subsets.
 
 For example, consider a simplicial complex **SC = { {1, 2, 3}, {1, 4}, {1, 2}, {1, 3}, {2, 3}, {1}, {2}, {3}, {4} }**. If **x** is an element of **SC**, then all non-empty subsets of **x** are also in **SC**. 
 
@@ -43,7 +44,7 @@ Example usage:
     ./visualsc -i data.sc -o image.pdf
     ./visualsc < data.sc > image.pdf
 
-Please see built-in help for more options (choosing PRNG seed, raw output, etc.) 
+Please see built-in help for more options (choosing PRNG seed, reading and writing raw coordinates output, etc.) 
 
     ./visualsc -h 
 

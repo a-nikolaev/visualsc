@@ -20,7 +20,7 @@ let (>>) (k,v) m = upd k v m
 let len2 (x,y) = x*.x +. y*.y 
 let len (x,y) = hypot x y 
 
-let layout sc = 
+let layout initial_config sc = 
 
   let nodes = Sc.nodes_set sc in
   let zero = Sc.S.fold (fun v acc -> (v, 0.0) >> acc) nodes M.empty in
@@ -41,7 +41,7 @@ let layout sc =
     (fun i -> arr.(i))
   in
 
-  (* "XORed" facets "listified" *)
+  (* Symmetric-difference-ed facets "listified" *)
   let fxorl = 
     let facets_num = Array.length af in
     Array.init facets_num (fun i ->
@@ -51,7 +51,7 @@ let layout sc =
         match (a |> Sc.S.elements, b |> Sc.S.elements) with
         | [], [] -> None
         | [], _ 
-        | _, [] -> failwith "XORin facets failure: One facet is a subset if another."
+        | _, [] -> failwith "Symmetric difference failure: One facet is a subset of another."
         | ls_a, ls_b -> Some (a, ls_a, Sc.S.cardinal a, b, ls_b, Sc.S.cardinal b)
       )
     )
@@ -76,9 +76,9 @@ let layout sc =
             List.fold_left 
               ( fun sum u ->
                   let disp = (mpos$u) -- vp in
-                  let d = len disp +. 0.1 in
-                  let z = (d -. 1.0) in
-                  let df = (z *. abs_float z) %% (disp // d) in
+                  let d = len disp +. 0.3 in
+                  let z = (len disp -. 1.0) in
+                  let df = 1.5 *. (z *. abs_float z +. z) %% (disp // d) in
                   sum ++ df
               )
               sum
@@ -103,7 +103,7 @@ let layout sc =
       in
 
       let find_radius center ft =
-        Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) ft 0.15
+        Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) ft 0.5
       in
 
       let centers = Array.map find_center af in
@@ -117,22 +117,26 @@ let layout sc =
           fold_lim (fun mfacc j ->
             let centeri, radi, li, ni, centerj, radj, lj, nj =
               match fxorl.(i).(j) with
-              | Some (fti, li, ni, ftj, lj, nj) ->
+              | Some (fti, li, ni, ftj, lj, nj) -> (* if facets i and j intersect *)
                   let ci = find_center fti in
                   let cj = find_center ftj in
                   (ci, find_radius ci fti, li, ni, cj, find_radius cj ftj, lj, nj)
-              | None -> centers.(i), radiuses.(i), afl.(i), Sc.S.cardinal af.(i), centers.(j), radiuses.(j), afl.(j), Sc.S.cardinal af.(j)
+              | None -> (* if don't intersect *)
+                  centers.(i), radiuses.(i), afl.(i), Sc.S.cardinal af.(i), centers.(j), radiuses.(j), afl.(j), Sc.S.cardinal af.(j)
             in
 
             let vec_ij = centerj -- centeri in
             let dist = len vec_ij in
-            let overlap = radi +. radj -. dist +. 0.1 in
+            let overlap = radi +. radj -. dist +. 0.40 in
+
+            let overlap = overlap +. 0.1 *. (if overlap > 0.0 then 1.0 else exp(4.0*.overlap) ) in 
+            
             if overlap > 0.0 then
             ( 
               let fni = float ni in
               let fnj = float nj in
 
-              let net_force = (-.overlap) *. 1.0 *. (fni +. fnj) %% vec_ij // (len vec_ij +. 0.001) in
+              let net_force = (-.overlap) *. 1.0 *. (3.0 +. log(fni +. fnj)) %% vec_ij // (len vec_ij +. 0.0001) in
 
               let m1 = List.fold_left (fun m v -> (v,(1.0/.fni)%%net_force) >> m) mfacc li in
               let m2 = List.fold_left (fun m v -> (v,(-1.0/.fnj)%%net_force) >> m) m1 lj in
@@ -155,7 +159,7 @@ let layout sc =
       let sum = Sc.S.fold (fun v sum -> sum ++ (mpos$v)) nodes (0.0,0.0) in
       let center = sum // (nodes |> Sc.S.cardinal |> float) in
       let radius = Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) nodes 0.0 in
-      (fun v -> 0.003 %% (center -- (mpos$v)) // radius )
+      (fun v -> 0.03 %% (center -- (mpos$v)) // radius )
     in
 
     (* forces on all vertices *)
@@ -196,7 +200,12 @@ let layout sc =
       let dim = sqrt (float n) in
       (fun () -> Random.float dim)
     in
-    M.map (fun _ -> (rnd(), rnd())) zero_vec 
+    M.mapi (fun v _ -> 
+        match initial_config v with
+        | Some xy -> xy
+        | None -> (rnd(), rnd())
+      ) 
+      zero_vec 
   in
   
   let mvel_initial = zero_vec in
@@ -227,7 +236,16 @@ let layout sc =
     let facets_num = Array.length af in
     4.0 *. float (nodes_num + facets_num)
   in
-  let mpos, _ = iter_relax 0.01 time (mpos_initial, mvel_initial) in
+
+  let nodes_num = Sc.S.cardinal nodes in
+  
+  let mpos = 
+    if nodes_num > 1 then 
+      let mpos, _ = iter_relax 0.01 time (mpos_initial, mvel_initial) in
+      mpos
+    else
+      mpos_initial
+  in
 
   (fun v -> mpos$v)
 

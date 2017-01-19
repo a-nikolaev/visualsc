@@ -65,8 +65,11 @@ let make_pdf oc sc pos =
 
       (* facets *)
       Sc.SS.iter (fun ft ->
+
+        let facet_size = Sc.S.cardinal ft in
+
         let ls = 
-          if Sc.S.cardinal ft < 3 then
+          if facet_size < 3 then
             ft |> Sc.S.elements |> List.map pos
           else
             Layout.convex_hull (ft |> Sc.S.elements |> List.map pos) 
@@ -82,8 +85,18 @@ let make_pdf oc sc pos =
             )
             [] 0 (n-1) 
           in          
-          ls |> List.map (fun xy -> circle 8 0.1 xy) |> List.flatten 
+          ls |> List.map (fun xy -> circle 12 (0.1 +. 0.02 *. float facet_size) xy) |> List.flatten 
         in
+      
+        ( match facet_size with 
+        | 3 -> Cairo.set_source_rgba cx 0.0 0.2 0.9 0.2;
+        | 4 -> Cairo.set_source_rgba cx 0.4 0.4 0.4 0.2;
+        | 5 -> Cairo.set_source_rgba cx 0.8 0.6 0.1 0.2;
+        | 6 -> Cairo.set_source_rgba cx 0.7 0.0 0.7 0.2;
+        | 2 -> Cairo.set_source_rgba cx 0.3 0.8 0.0 0.2;
+        | 1 -> Cairo.set_source_rgba cx 0.3 0.8 0.0 0.3;
+        | _ -> Cairo.set_source_rgba cx 0.3 0.8 0.0 0.2;
+        );
 
         draw_poly cx scale (ls2 |> Layout.convex_hull);
 
@@ -123,6 +136,18 @@ let make_raw oc sc pos =
     printf "%i %g %g\n" v ox oy;
   ) nodes
 
+let read_raw ic =
+  let ht = Hashtbl.create 128 in
+  let rec next() =
+    try 
+      let v,x,y = Scanf.bscanf ic "%i %g %g " (fun v x y -> (v,x,y)) in 
+      Hashtbl.replace ht v (x,y);
+      next()
+    with
+    | End_of_file -> ()
+  in
+  next();
+  (fun v -> try Some (Hashtbl.find ht v) with Not_found -> None)
 
 let print_help () = print_endline 
 "visualsc. A simplicial complex visualization tool similar to Graphviz. 
@@ -140,6 +165,8 @@ Options:
         output file (if not specified: write to stdout)
   --raw
         print out node coordinates only (plain text output instead of PDF)
+  -I file
+        read initial node coordinates (format is the same as the raw output)
   --seed=integer
         specify PRNG seed (if not specified: chosen automatically)
 "
@@ -149,7 +176,7 @@ let () =
   let flag, param, other_args =
     Opt.scan 
       (* flags  *) [Long "raw"; Short 'h'] 
-      (* params *) [Short 'i'; Short 'o'; Long "seed"]
+      (* params *) [Short 'i'; Short 'o'; Short 'I'; Long "seed"]
       Sys.argv 1
   in
   
@@ -174,11 +201,21 @@ let () =
       | _ -> stdout, (fun () -> ())
     in
 
+    let initial_config =
+      match param (Short 'I') with
+      | Some (OK file) ->
+          let ic = Scanf.Scanning.from_file file in
+          let func = read_raw ic in
+          Scanf.Scanning.close_in ic;
+          func
+      | _ -> (fun _ -> None)
+    in
+
     (* generate output *)
     let sc = Sc.parse_from_chan ic in
     ic_close ();
 
-    let pos = Layout.layout sc in
+    let pos = Layout.layout initial_config sc in
     let make = if flag (Long "raw") then make_raw else make_pdf in
     make oc sc pos;
 
