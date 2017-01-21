@@ -47,7 +47,7 @@ The example **SC** has only two facets: **{1, 2, 3}** and **{1, 4}**.
 
 You have to install `ocaml` compiler with `cairo2` package for rendering PDFs. It is recommended to use OCaml package manager `opam` to install `cairo2`:
   
-	opam install cailro2
+	opam install cairo2
 
 To build:
 
