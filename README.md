@@ -111,8 +111,9 @@ How to make both complexes look comparable? You can:
       ./visualsc -I 1.coords -i 1.sc -o 1.pdf
       ./visualsc -I 1.coords -i 2.sc -o 2.pdf
 
-We first compute the coordinates of `1.sc`, and us it as an input for both complexes, so the same nodes will be close to each other in both images.
-The same trick will work if you need a sequence of complexes rendered as a progression of snapshots, for example:
+We first computed the coordinates of `1.sc` and saved them in the file `1.coords`.
+The we use those coordinates as an initial input for rendering both complexes, so the same nodes will be close in both images.
+This trick will also work if you need a sequence of complexes rendered as a progression of snapshots, for example, here we do it for three complexes:
 
 ![](http://i.imgur.com/BDX7YlW.png)
 
