@@ -133,7 +133,7 @@ let make_raw oc sc pos =
   
   Sc.S.iter (fun v ->
     let (ox,oy) = v |> pos in
-    printf "%i %g %g\n" v ox oy;
+    fprintf oc "%i %g %g\n" v ox oy;
   ) nodes
 
 let read_raw ic =
