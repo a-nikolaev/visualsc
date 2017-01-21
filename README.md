@@ -19,7 +19,7 @@ Each facet is a set of nodes enclosed in curly braces `{...}`. For example:
 	
   Or it's enough to separate nodes with spaces:
   
-  {1 2 3 4 5} {1 5 6 7} {2 8 9} {7 8}
+	{1 2 3 4 5} {1 5 6 7} {2 8 9} {7 8}
 
 The nodes can be arbitrary integers that are separated by spaces, commas, semicolons
 (or actually anything other than the numbers or curly braces).
@@ -47,7 +47,7 @@ The example **SC** has only two facets: **{1, 2, 3}** and **{1, 4}**.
 
 You have to install `ocaml` compiler with `cairo2` package for rendering PDFs. It is recommended to use OCaml package manager `opam` to install `cairo2`:
   
-  opam install cailro2
+	opam install cailro2
 
 To build:
 
@@ -55,12 +55,12 @@ To build:
 
 Example usage:
 
-    ./visualsc -i input.sc -o output.pdf
-    ./visualsc < input.sc > output.pdf
+	./visualsc -i input.sc -o output.pdf
+	./visualsc < input.sc > output.pdf
 
 Please see built-in help for more options (choosing PRNG seed, reading and writing raw coordinates output, etc.) 
 
-    ./visualsc -h 
+	./visualsc -h 
 
 # License
 
