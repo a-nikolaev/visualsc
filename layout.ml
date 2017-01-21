@@ -22,12 +22,11 @@ let len (x,y) = hypot x y
 
 let layout initial_config sc = 
 
+  (* se of nodes *)
   let nodes = Sc.nodes_set sc in
-  let zero = Sc.S.fold (fun v acc -> (v, 0.0) >> acc) nodes M.empty in
-  let zero_vec = Sc.S.fold (fun v acc -> (v,(0.0, 0.0)) >> acc) nodes M.empty in
 
-  (* list of nodes *)
-  let ns = Sc.S.elements nodes in
+  (* map of initial zero locations for all nodes *)
+  let zero_vec = Sc.S.fold (fun v acc -> (v,(0.0, 0.0)) >> acc) nodes M.empty in
 
   (* array of facet *)
   let af = Sc.SS.elements sc |> Array.of_list in
@@ -35,11 +34,6 @@ let layout initial_config sc =
   (* array of "listified" facet *)
   let afl = af |> Array.map Sc.S.elements in
  
-  (* facet index -> facet degree *)
-  let deg =
-    let arr = Array.map (fun ft -> Sc.S.cardinal ft) af in
-    (fun i -> arr.(i))
-  in
 
   (* Symmetric-difference-ed facets "listified" *)
   let fxorl = 

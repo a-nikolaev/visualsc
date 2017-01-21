@@ -117,6 +117,9 @@ This trick will also work if you need a sequence of complexes rendered as a prog
 
 ![](http://i.imgur.com/BDX7YlW.png)
 
+You can use the tools such as `pdfunite` and `pdfjam` to join multiple PDFs into one file or one page. 
+Graphical vector editors such as Inkscape can be also helpful if you need extra image manipulation.
+
 # License
 
 The software is distributed under the conditions of the BSD 3-clause license.
