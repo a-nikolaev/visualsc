@@ -103,7 +103,7 @@ let layout initial_config sc =
       in
 
       let find_radius center ft =
-        Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) ft 0.5
+        ( Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) ft 0.25 ) *. 1.0
       in
 
       let centers = Array.map find_center af in
@@ -115,20 +115,28 @@ let layout initial_config sc =
       let m = 
         fold_lim (fun mfacc i ->
           fold_lim (fun mfacc j ->
-            let centeri, radi, li, ni, centerj, radj, lj, nj =
+            let centeri, radi, li, ni, centerj, radj, lj, nj, they_intersect =
               match fxorl.(i).(j) with
               | Some (fti, li, ni, ftj, lj, nj) -> (* if facets i and j intersect *)
                   let ci = find_center fti in
                   let cj = find_center ftj in
-                  (ci, find_radius ci fti, li, ni, cj, find_radius cj ftj, lj, nj)
+                  (ci, find_radius ci fti, li, ni, cj, find_radius cj ftj, lj, nj, true)
               | None -> (* if don't intersect *)
-                  centers.(i), radiuses.(i), afl.(i), Sc.S.cardinal af.(i), centers.(j), radiuses.(j), afl.(j), Sc.S.cardinal af.(j)
+                  centers.(i), radiuses.(i), afl.(i), Sc.S.cardinal af.(i), centers.(j), radiuses.(j), afl.(j), Sc.S.cardinal af.(j), false
             in
 
             let vec_ij = centerj -- centeri in
             let dist = len vec_ij in
-            let overlap = radi +. radj -. dist +. 0.40 in
 
+            let overlap = radi +. radj -. dist +. 0.1 in
+            
+            let repel_disjoint = if not they_intersect then 1.0 else 0.0 in
+            
+            let overlap = overlap +. 0.3 *. (min 1.0 (0.1 /. (dist +. 0.001))) in
+
+            let overlap = overlap +. 0.2 *. repel_disjoint in
+
+            let overlap = overlap +. 0.4 *. (if overlap > 0.0 then 0.4 else max 0.0 (0.4 -. overlap)) in 
             (* let overlap = overlap +. 0.1 *. (if overlap > 0.0 then 1.0 else exp(4.0*.overlap) ) in *)
             
             if overlap > 0.0 then
@@ -136,10 +144,18 @@ let layout initial_config sc =
               let fni = float ni in
               let fnj = float nj in
 
-              let net_force = (-.overlap) *. 1.0 *. (3.0 +. log(fni +. fnj)) %% vec_ij // (len vec_ij +. 0.0001) in
+              let dir = 
+                if dist < 0.00001 then 
+                  let phi = float (j-i) /. float (Sc.S.cardinal nodes) *. 6.2831853  in
+                  (cos phi, sin phi)
+                else
+                  vec_ij // dist
+              in
 
-              let m1 = List.fold_left (fun m v -> (v,(1.0/.fni)%%net_force) >> m) mfacc li in
-              let m2 = List.fold_left (fun m v -> (v,(-1.0/.fnj)%%net_force) >> m) m1 lj in
+              let net_force = (-.overlap) *. 1.0 *. (2.0 +. sqrt(fni +. fnj)) %% dir in
+
+              let m1 = List.fold_left (fun m v -> (v, ((m$v) ++ (1.0/.fni)%%net_force)) >> m) mfacc li in
+              let m2 = List.fold_left (fun m v -> (v, ((m$v) ++ (-1.0/.fnj)%%net_force)) >> m) m1 lj in
               m2
             )
             else
@@ -159,7 +175,14 @@ let layout initial_config sc =
       let sum = Sc.S.fold (fun v sum -> sum ++ (mpos$v)) nodes (0.0,0.0) in
       let center = sum // (nodes |> Sc.S.cardinal |> float) in
       let radius = Sc.S.fold (fun v acc -> max acc (len ((mpos$v) -- center))) nodes 0.0 in
-      (fun v -> 0.03 %% (center -- (mpos$v)) // radius )
+      
+      let number = Sc.S.cardinal nodes in
+      let volume_per_node = (3.1415 *. radius *. radius) /. float number in
+      
+      (fun v -> 
+          let length = len (center -- (mpos$v)) in
+          (max 0.0 (volume_per_node -. 1.0)) *. (length /. radius) %% (center -- (mpos$v)) // radius 
+      )
     in
 
     (* forces on all vertices *)
@@ -234,7 +257,7 @@ let layout initial_config sc =
   let time =
     let nodes_num = Sc.S.cardinal nodes in
     let facets_num = Array.length af in
-    4.0 *. float (nodes_num + facets_num)
+    1.0 *. float (nodes_num + facets_num)
   in
 
   let nodes_num = Sc.S.cardinal nodes in
