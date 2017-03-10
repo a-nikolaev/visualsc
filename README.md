@@ -26,7 +26,7 @@ The nodes can be arbitrary integers that are separated by spaces, commas, semico
 New-line and other whitespace characters can be added for clarity. 
 In fact, it makes sense to improve the program allowing arbitrary strings as nodes. 
 
-If the input simplicial complex is stored the file `input.sc`, then we can run the program:
+If the input simplicial complex is stored in the file `input.sc`, then we can run the program:
 
 	./visualsc -i input.sc -o output.pdf
 
