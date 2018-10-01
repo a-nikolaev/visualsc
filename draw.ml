@@ -60,6 +60,9 @@ let make_pdf oc sc pos =
   pdf oc width height 
     (fun cx ->
 
+      Cairo.select_font_face cx "Sans" ~slant:Cairo.Upright ~weight:Cairo.Normal;
+      Cairo.set_font_size cx 15.0;
+
       Cairo.set_line_width cx 1.0;
       Cairo.set_source_rgba cx 0.3 0.8 0.0 0.2;
 

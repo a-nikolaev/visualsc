@@ -44,8 +44,18 @@ let layout initial_config sc =
         let b = Sc.S.diff af.(j) af.(i) in
         match (a |> Sc.S.elements, b |> Sc.S.elements) with
         | [], [] -> None
+        (*
         | [], _ 
         | _, [] -> failwith "Symmetric difference failure: One facet is a subset of another."
+        *)
+        | [], ls_b -> 
+            let a = Sc.S.inter af.(i) af.(j) in
+            let ls_a = Sc.S.elements a in
+            Some (a, ls_a, Sc.S.cardinal a, b, ls_b, Sc.S.cardinal b)
+        | ls_a, [] -> 
+            let b = Sc.S.inter af.(j) af.(i) in
+            let ls_b = Sc.S.elements b in
+            Some (a, ls_a, Sc.S.cardinal a, b, ls_b, Sc.S.cardinal b)
         | ls_a, ls_b -> Some (a, ls_a, Sc.S.cardinal a, b, ls_b, Sc.S.cardinal b)
       )
     )
