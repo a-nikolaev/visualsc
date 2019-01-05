@@ -2,8 +2,9 @@
 # Simplicial complex visualization
 
 **visualsc** is a simple command-line tool similar to [Graphviz](http://graphviz.org/) designed for visualizing 
-abstract simplicial complexes rather than graphs. It is using physics-like spring-forces simulation for choosing good node layout. 
-Output is a PDF file. You may use other tools such as ImageMagick to convert to PNG, SVG, or other formats.
+**abstract simplicial complexes** and **hypergraphs**.
+It is using a physics-like spring forces simulation for choosing optimal node layout. 
+The output is a PDF file. You may use other tools such as ImageMagick to convert to PNG, SVG, or other formats.
 
 **Some examples:**
 
@@ -12,8 +13,8 @@ Output is a PDF file. You may use other tools such as ImageMagick to convert to 
 ![screenshot](http://i.imgur.com/05iR0Fm.png)
 
 **Input format:**   
-The input format is a plain text file listing all facets of the simplicial complex. 
-Each facet is a set of nodes enclosed in curly braces `{...}`. For example:
+The input format is a plain text file listing all facets of the simplicial complex (or hyperedges of the hypergraph). 
+Each facet (hyperedge) is a set of nodes enclosed in curly braces `{...}`. For example:
 		
 	{1, 2, 3, 4, 5} {1, 5, 6, 7} {2, 8, 9} {7, 8}
 	
@@ -34,7 +35,7 @@ The output PDF will look as follows:
 
  ![](http://i.imgur.com/qN8Ct65.png) 
 
-## Mathematical definition
+## Mathematical definition of simplicial complexes
 An **abstract simplicial complex** \[[see the article in Wikipedia](https://en.wikipedia.org/wiki/Abstract_simplicial_complex)\]
 is a family of non-empty finite sets closed under the operation of taking non-empty subsets.
 
