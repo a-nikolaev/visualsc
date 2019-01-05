@@ -1,5 +1,5 @@
 
-# Simplicial complex visualization
+# Simplicial complex and hypergraph visualization
 
 **visualsc** is a simple command-line tool similar to [Graphviz](http://graphviz.org/) designed for visualizing 
 **abstract simplicial complexes** and **hypergraphs**.
